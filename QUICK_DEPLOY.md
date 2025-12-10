@@ -16,10 +16,13 @@ git push origin main
 2. Click "Add New" → "Project"
 3. Select your repo
 4. **Root Directory**: `backend`
-5. Add Environment Variable:
+5. Add Environment Variables:
    - `GEMINI_API_KEY` = your_api_key
+   - `NODE_ENV` = production
 6. Click "Deploy"
 7. **Copy the backend URL** (e.g., `https://abc123.vercel.app`)
+
+**Note**: Backend uses in-memory database on Vercel (perfect for demos!)
 
 ### Step 3: Deploy Frontend (2 min)
 

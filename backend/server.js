@@ -12,11 +12,19 @@ app.use(cors());
 app.use(express.json());
 
 // Initialize SQLite Database
-const db = new sqlite3.Database("./faqs.db", (err) => {
+// Use in-memory database for Vercel (serverless environment)
+const isProduction = process.env.NODE_ENV === "production";
+const dbPath = isProduction ? ":memory:" : "./faqs.db";
+console.log(isProduction)
+const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
     console.error("Error opening database:", err);
   } else {
-    console.log("Connected to SQLite database");
+    console.log(
+      `Connected to SQLite database (${
+        isProduction ? "in-memory" : "file-based"
+      })`
+    );
     initializeDatabase();
   }
 });
@@ -37,9 +45,13 @@ function initializeDatabase() {
         return;
       }
 
-      // Check if data already exists
+      // Check if data already exists (skip check in production as it's always empty)
       db.get("SELECT COUNT(*) as count FROM faqs", (err, row) => {
-        if (err || row.count > 0) return;
+        if (err) {
+          console.error("Error checking FAQ count:", err);
+          return;
+        }
+        if (row.count > 0) return;
 
         const sampleFAQs = [
           {
